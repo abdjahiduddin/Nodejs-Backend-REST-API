@@ -1,2 +1,2 @@
-# rest-api-nodejs
-REST API Nodejs
+# Nodejs Backend REST API
+Udemy Course
