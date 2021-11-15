@@ -3,6 +3,9 @@ const path = require("path");
 
 const { validationResult } = require("express-validator");
 
+// Import socket.io
+const io = require("../socket");
+
 // Import models
 const Post = require("../models/post");
 const User = require("../models/auth");
@@ -15,6 +18,8 @@ exports.getPosts = async (req, res, next) => {
     const totalItems = await Post.find().countDocuments();
 
     const posts = await Post.find()
+      .populate("creator")
+      .sort({ createdAt: -1 })
       .skip((currentPage - 1) * itemPerPage)
       .limit(itemPerPage);
 
@@ -58,10 +63,7 @@ exports.createPost = async (req, res, next) => {
     const post = new Post({
       title: title,
       content: content,
-      creator: {
-        name: user.name,
-        userId: req.userId,
-      },
+      creator: req.userId,
       imageUrl: "images/" + image.filename,
     });
     const savePost = await post.save();
@@ -69,13 +71,15 @@ exports.createPost = async (req, res, next) => {
     user.posts.push(savePost);
     const result = await user.save();
 
+    io.getIO().emit("posts", {
+      action: "create",
+      post: { ...post._doc, creator: { _id: req.userId, name: user.name } },
+    });
+
     res.status(201).json({
       message: "Post created successfully!",
       post: savePost,
-      creator: {
-        _id: result._id,
-        name: result.name,
-      },
+      creator: result._id,
     });
   } catch (err) {
     if (!err.statusCode) {
@@ -134,14 +138,14 @@ exports.updatePost = async (req, res, next) => {
   }
 
   try {
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate('creator');
     if (!post) {
       const err = new Error("No post found");
       err.statusCode = 422;
       throw err;
     }
 
-    if (req.userId.toString() !== post.creator.userId.toString()) {
+    if (req.userId.toString() !== post.creator._id.toString()) {
       const err = new Error("Not authorized");
       err.statusCode = 401;
       throw err;
@@ -156,6 +160,11 @@ exports.updatePost = async (req, res, next) => {
     post.content = content;
 
     const result = await post.save();
+
+    io.getIO().emit('posts', {
+      action: 'update',
+      post: result
+    })
 
     res.status(200).json({
       message: "Post updated",
@@ -174,28 +183,32 @@ exports.deletePost = async (req, res, next) => {
 
   try {
     const post = await Post.findById(postId);
-    
+
     if (!post) {
       const error = new Error("No post found");
       error.statusCode = 422;
       throw err;
     }
 
-    if (req.userId.toString() !== post.creator.userId.toString()) {
+    if (req.userId.toString() !== post.creator.toString()) {
       const err = new Error("Not authorized");
       err.statusCode = 401;
       throw err;
     }
-    
+
     const user = await User.findById(req.userId);
     user.posts.pull(postId);
-    
+
     const savedUser = await user.save();
 
     deleteFile(post.imageUrl);
-    
+
     const deletedPost = await Post.findByIdAndDelete(postId);
-    
+
+    io.getIO().emit('posts', {
+      action: 'delete',
+      post: postId
+    })
     res.status(200).json({
       message: "File deleted",
     });

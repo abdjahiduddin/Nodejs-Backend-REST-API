@@ -42,7 +42,7 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE"
@@ -76,8 +76,14 @@ mongoose
   .connect(MONGODB_URI)
   .then((connect) => {
     console.log("Connected to database");
-    app.listen(8080, () => {
-      console.log("Listen on port 8080");
+    console.log("Listen on port 8080");
+
+    const server = app.listen(8080);
+
+    const io = require("./socket").init(server)
+
+    io.on("connection", (socket) => {
+      console.log("Client connected");
     });
   })
   .catch((err) => console.log(err));
