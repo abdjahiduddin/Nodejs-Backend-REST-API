@@ -67,7 +67,7 @@ exports.createPost = async (req, res, next) => {
       imageUrl: "images/" + image.filename,
     });
     const savePost = await post.save();
-
+    
     user.posts.push(savePost);
     const result = await user.save();
 
@@ -81,11 +81,13 @@ exports.createPost = async (req, res, next) => {
       post: savePost,
       creator: result._id,
     });
+    return result;
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
     next(err);
+    return err;
   }
 };
 

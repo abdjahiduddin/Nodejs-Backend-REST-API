@@ -42,7 +42,7 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE"
@@ -80,7 +80,7 @@ mongoose
 
     const server = app.listen(8080);
 
-    const io = require("./socket").init(server)
+    const io = require("./socket").init(server);
 
     io.on("connection", (socket) => {
       console.log("Client connected");
