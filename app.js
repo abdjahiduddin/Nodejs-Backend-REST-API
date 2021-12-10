@@ -91,7 +91,7 @@ mongoose
     console.log("Connected to database");
     console.log("Listen on port 8080");
 
-    const server = app.listen(8080);
+    const server = app.listen(process.env.PORT || 8080);
 
     const io = require("./socket").init(server);
 
