@@ -10,6 +10,8 @@ const io = require("../socket");
 const Post = require("../models/post");
 const User = require("../models/auth");
 
+// const HOST = "https://message-restapi.herokuapp.com/"
+
 exports.getPosts = async (req, res, next) => {
   const currentPage = req.query.page || 1;
   const itemPerPage = 2;
@@ -102,6 +104,8 @@ exports.getPost = async (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
+
+    console.log(post)
 
     res.status(200).json({
       message: "Data found",
