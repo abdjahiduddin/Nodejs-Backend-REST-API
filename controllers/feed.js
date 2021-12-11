@@ -10,8 +10,6 @@ const io = require("../socket");
 const Post = require("../models/post");
 const User = require("../models/auth");
 
-// const HOST = "https://message-restapi.herokuapp.com/"
-
 exports.getPosts = async (req, res, next) => {
   const currentPage = req.query.page || 1;
   const itemPerPage = 2;
