@@ -2,12 +2,12 @@ const { expect } = require("chai");
 const chai = require("chai");
 const sinon = require("sinon");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv").config();
 
 const AuthController = require("../controllers/auth");
 const User = require("../models/auth");
 
-const MONGODB_URI =
-  "mongodb+srv://node_user:toor@freecodecamp.yulo9.mongodb.net/test-messages?retryWrites=true&w=majority";
+const MONGODB_URI = process.env.MONGODB_URI_TEST;
 
 describe("Auth Controllers", function () {
   before(function (done) {
