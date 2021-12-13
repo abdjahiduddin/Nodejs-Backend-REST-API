@@ -12,9 +12,9 @@ https://www.udemy.com/course/nodejs-the-complete-guide/
 ## Live Preview
 
 Frontend yang menggunakan backend ini telah di deploy ke [github pages](https://pages.github.com/) dan dapat diakses melalui link berikut <br/>
-https://abdjahiduddin.github.io/frontend-nodejs-rest-api/
+https://abdjahiduddin.github.io/frontend-nodejs-rest-api/ <br/>
 Sedangkan backend ini telah dideploy di [heroku](https://www.heroku.com/) <br/>
-https://message-restapi.herokuapp.com/ <br/>
+https://message-restapi.herokuapp.com/ 
 
 Anda dapat membuat akun baru atau login menggunakan user berikut<br/>
 user: john.doe@test.com <br/>
